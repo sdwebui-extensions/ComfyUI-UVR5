@@ -13,7 +13,10 @@ input_path = folder_paths.get_input_directory()
 output_path = folder_paths.get_output_directory()
 base_path = os.path.dirname(input_path)
 node_path = os.path.join(base_path,"custom_nodes/ComfyUI-UVR5")
-weights_path = os.path.join(node_path, "uvr5")
+weights_path = os.path.join(folder_paths.models_dir, "uvr5")
+cache_dir = "/stable-diffusion-cache/models/uvr5"
+if os.path.exists(cache_dir):
+    weights_path = cache_dir
 device= "cuda" if cuda_malloc_supported() else "cpu"
 is_half=True
 
@@ -159,22 +162,22 @@ class UVR5:
 
     def split(self, audio, model,agg,format0):
         
-        if model == "onnx_dereverb_By_FoxJoy":
-            if not os.path.isfile(os.path.join(weights_path,"uvr5_weights/onnx_dereverb_By_FoxJoy", "vocals.onnx")):
-                hf_hub_download(
-                    repo_id="lj1995/VoiceConversionWebUI",
-                    filename="vocals.onnx",
-                    subfolder= "uvr5_weights/onnx_dereverb_By_FoxJoy",
-                    local_dir= weights_path
-                )
-        else:
-            if not os.path.isfile(os.path.join(weights_path,"uvr5_weights", model)):
-                hf_hub_download(
-                    repo_id="lj1995/VoiceConversionWebUI",
-                    filename=model,
-                    subfolder= "uvr5_weights",
-                    local_dir= weights_path
-                )
+        # if model == "onnx_dereverb_By_FoxJoy":
+        #     if not os.path.isfile(os.path.join(weights_path,"uvr5_weights/onnx_dereverb_By_FoxJoy", "vocals.onnx")):
+        #         hf_hub_download(
+        #             repo_id="lj1995/VoiceConversionWebUI",
+        #             filename="vocals.onnx",
+        #             subfolder= "uvr5_weights/onnx_dereverb_By_FoxJoy",
+        #             local_dir= weights_path
+        #         )
+        # else:
+        #     if not os.path.isfile(os.path.join(weights_path,"uvr5_weights", model)):
+        #         hf_hub_download(
+        #             repo_id="lj1995/VoiceConversionWebUI",
+        #             filename=model,
+        #             subfolder= "uvr5_weights",
+        #             local_dir= weights_path
+        #         )
         save_root_vocal = output_path
         save_root_ins = output_path
         vocal_AUDIO,bgm_AUDIO = self.uvr(model, audio, save_root_vocal,save_root_ins,agg, format0)
